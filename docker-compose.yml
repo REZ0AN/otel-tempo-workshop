@@ -1,0 +1,49 @@
+services:
+  node-app:
+    build: 
+      context: .
+    container_name: node-app
+    ports:
+      - "5010:5010"
+  collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: collector
+    command: [ "--config=/etc/collector.yaml" ]
+    ports:
+      - "4318:4318" # Connection from app to grafana tempo
+    volumes:
+      - ./otel-collector-config.yml:/etc/collector.yaml
+    depends_on:
+      - tempo
+
+  tempo:
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    container_name: tempo
+    ports:
+      - "3200:3200"
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml
+      - tempo-data:/var/tempo
+
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - ./grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+      - ./io-task-dashboard-tracing.json:/etc/grafana/provisioning/dashboards/io-tasks-dashboard.json:ro
+    depends_on:
+      - collector
+      - tempo
+
+volumes:
+  tempo-data:
+  grafana-data:

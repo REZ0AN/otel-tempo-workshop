@@ -1,0 +1,161 @@
+{
+  "id": null,
+  "title": "IO Tasks Tracing Dashboard",
+  "tags": ["tracing", "io-operations", "tempo"],
+  "timezone": "browser",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Recent IO Tasks Traces",
+      "type": "traces",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "query": "{ resource.service.name=\"tracer-app\" && name=\"io-tasks-handler\" }",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "showTime": true,
+        "showUniqueLabels": false,
+        "showCommonLabels": false
+      }
+    },
+    {
+      "id": 2,
+      "title": "File Operations Timeline",
+      "type": "traces",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "query": "{ resource.service.name=\"tracer-app\" && (name=\"write-file\" || name=\"read-file\" || name=\"delete-file\") }",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "options": {
+        "showTime": true
+      }
+    },
+    {
+      "id": 3,
+      "title": "Error Traces",
+      "type": "traces",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "query": "{ resource.service.name=\"tracer-app\" && status=error }",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "options": {
+        "showTime": true
+      }
+    },
+    {
+      "id": 4,
+      "title": "All Service Traces",
+      "type": "traces",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "query": "{ resource.service.name=\"tracer-app\" }",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "options": {
+        "showTime": true
+      }
+    },
+    {
+      "id": 5,
+      "title": "HTTP Requests",
+      "type": "traces",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "query": "{ resource.service.name=\"tracer-app\" && name=~\"HTTP.*\" }",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "options": {
+        "showTime": true
+      }
+    }
+  ],
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "refresh": "5s",
+  "schemaVersion": 30,
+  "version": 1,
+  "links": [],
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "hideControls": false,
+  "style": "dark",
+  "uid": "tracer-app-dashboard"
+}
