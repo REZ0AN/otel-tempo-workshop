@@ -1,7 +1,7 @@
 services:
   node-app:
     build: 
-      context: .
+      context: ./app
     container_name: node-app
     ports:
       - "5010:5010"
@@ -12,7 +12,7 @@ services:
     ports:
       - "4318:4318" # Connection from app to grafana tempo
     volumes:
-      - ./otel-collector-config.yml:/etc/collector.yaml
+      - ./otel-tempo-configs/otel/otel-collector-config.yml:/etc/collector.yaml
     depends_on:
       - tempo
 
@@ -23,7 +23,7 @@ services:
     ports:
       - "3200:3200"
     volumes:
-      - ./tempo.yaml:/etc/tempo.yaml
+      - ./otel-tempo-configs/tempo/tempo.yaml:/etc/tempo.yaml
       - tempo-data:/var/tempo
 
 
@@ -37,9 +37,9 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
-      - ./grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
-      - ./io-task-dashboard-tracing.json:/etc/grafana/provisioning/dashboards/io-tasks-dashboard.json:ro
+      - ./otel-tempo-configs/grafana/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - ./otel-tempo-configs/grafana/grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+      - ./otel-tempo-configs/grafana/tracer-app-dashboard.json:/etc/grafana/provisioning/dashboards/io-tasks-dashboard.json:ro
     depends_on:
       - collector
       - tempo

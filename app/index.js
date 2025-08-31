@@ -13,11 +13,41 @@ const SERVICE_VERSION = process.env.SERVICE_VERSION;
 
 const tracer = trace.getTracer(SERVICE_NAME,SERVICE_VERSION);
 
+app.use((req, res, next) => {
+  const span = tracer.startSpan(`HTTP ${req.method} ${req.path}`, {
+    kind: SpanKind.SERVER,
+    attributes: {
+      'http.method': req.method,
+      'http.url': req.url,
+      'http.user_agent': req.get('User-Agent') || 'unknown',
+    }
+  });
+
+  req.span = span;
+  
+  res.on('finish', () => {
+    span.setAttributes({
+      'http.status_code': res.statusCode,
+    });
+    
+    if (res.statusCode >= 400) {
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: `HTTP ${res.statusCode}`
+      });
+    }
+    
+    span.end();
+  });
+  
+  next();
+});
 
 app.use(bodyParser.json());
 
 app.get('/io_tasks', async (req, res) => {
   const mainSpan = tracer.startSpan('io-tasks-handler', {
+    parent: req.span,
     attributes: {
       'operation.type': 'file-operations'
     }
