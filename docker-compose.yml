@@ -43,6 +43,14 @@ services:
     depends_on:
       - collector
       - tempo
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    volumes:
+      - ./otel-tempo-configs/k6:/scripts
+    depends_on:
+      - node-app
+    entrypoint: [ "k6", "run", "/scripts/load-test.js" ]
 
 volumes:
   tempo-data:

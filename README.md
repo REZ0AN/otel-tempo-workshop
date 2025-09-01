@@ -45,5 +45,24 @@ http://localhost:5010/api/v1/io_tasks
 
 Sending requests to this endpoint will populate trace data in Grafana.
 
-> **Tip:** For load testing and continuous data generation, `k6` or a similar tool can be used in future implementations.
+#### 3. Automated Load with k6
 
+A sample script is provided in `otel-tempo-configs/k6/load-test.js`. 
+
+##### Run automatically with Docker Compose
+
+By default, when you run:
+
+```bash
+docker compose up --build
+```
+
+The k6 container will start and execute the load test against the `node-app`.
+
+##### Run manually on demand
+
+To run k6 only when needed:
+
+```bash
+docker compose run --rm k6 run /scripts/load-test.js
+```
